@@ -3,7 +3,7 @@
 ############################################################
 # sort_ip.pl
 #
-# Copyright 2009,2013,2017,2019 (C) Christopher J. Dunkle
+# Copyright 2009,2013,2017,2019,2023 (C) Christopher J. Dunkle
 #
 # Extracts all IP addresses in the given file(s) or STDIN
 # Strict matching to filter proper dotted quad IP addresses
@@ -16,6 +16,7 @@
 # 2017-02-15: Fixed parsing of reverse DNS lookups 
 # 2017-02-16: Fixed normalization of zero padded addresses
 # 2019-09-15: Minor code style changes
+# 2023-02-09: Removed dot from neg lookbehind in relaxed regex
 #
 ############################################################
 
@@ -167,7 +168,7 @@ sub new {
 	my $RE_O_R = qr/(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|0?[1-9][0-9]|0?0?[0-9])/;
 	# IP address is a dotted quad
 	my $RE_IP_S = qr/(?<![0-9a-zA-Z.])(?:${RE_O_S}[.]${RE_O_S}[.]${RE_O_S}[.]${RE_O_S})(?![0-9a-zA-Z.])/;
-	my $RE_IP_R = qr/(?<![0-9a-zA-Z.])(?:${RE_O_R}[.]${RE_O_R}[.]${RE_O_R}[.]${RE_O_R}(?:[.]in-addr[.]arpa)?)(?![0-9a-zA-Z])/;
+	my $RE_IP_R = qr/(?<![0-9a-zA-Z])(?:${RE_O_R}[.]${RE_O_R}[.]${RE_O_R}[.]${RE_O_R}(?:[.]in-addr[.]arpa)?)(?![0-9a-zA-Z])/;
 	my $regex_strict = {
 		octet => $RE_O_S,
 		ip => $RE_IP_S
