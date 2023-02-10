@@ -17,6 +17,7 @@
 # 2017-02-16: Fixed normalization of zero padded addresses
 # 2019-09-15: Minor code style changes
 # 2023-02-09: Removed dot from neg lookbehind in relaxed regex
+# 2023-02-09: Removed CR from new lines
 #
 ############################################################
 
