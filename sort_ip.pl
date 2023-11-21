@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 ############################################################
 # sort_ip.pl
@@ -18,6 +18,8 @@
 # 2019-09-15: Minor code style changes
 # 2023-02-09: Removed dot from neg lookbehind in relaxed regex
 # 2023-02-09: Removed CR from new lines
+# 2023-11-21: Append to list only if not sorting
+# 2023-11-21: Added perldoc
 #
 ############################################################
 
@@ -53,7 +55,7 @@ sub usage {
 	"    -l: print entire line containing IPs\n" .
 	"    -p: prepend lines with matching IP (for use with -l when sorted)\n" .
 	"    -i: ignore comment lines (starting with #)\n" .
-	"    -r: relaxed matching (will match tcpdump output, but also SNMP MIBs!)\n" .
+	"    -r: relaxed matching (will match tcpdump output, but also SNMP OIDs!)\n" .
 	"    -h: print help (or -?)\n" .
 	"  STDIN is used when FILENAME is omitted\n" .
 	"";
@@ -235,8 +237,10 @@ sub process_line {
 		# normalize IP address (remove leading zeros from each octet)
 		$ip =~ s/(?<![0-9])0+(?=[0-9])//g;
 
-		# append to list
-		push @{$self->{'ip_list'}}, $ip;
+		# append to list only if not sorting (to conserve memory)
+		if (! $self->{'opt'}{'sort'}) {
+			push @{$self->{'ip_list'}}, $ip;
+		}
 
 		# increment count of this IP
 		$self->{'ip_hash'}{$ip}++;
@@ -436,3 +440,96 @@ sub output {
 }
 
 ############################################################
+
+__END__
+
+=head1 NAME
+
+sort_ip.pl - extracts and sorts IP addresses
+
+=head1 DESCRIPTION
+
+Extracts, sorts, and prints a list of unique IP addresses found in the input.
+Reads from either STDIN or a list of specified filenames. IP addresses are
+sorted using numeric equivalent values.
+
+IP addresses are matched using a strict regular expression that prevents
+matching on strings containing more than 4 dots. This intentionally excludes
+SNMP OIDs with a greater number of dotted values, but also excludes tcpdump
+output with a dotted port number after valid IP addresses. The B<-r> option
+applies a relaxed regular expression that will correctly match tcpdump output,
+but will also incorrectly match SNMP OIDs. Use this option with caution.
+
+Relaxed matching will also match on other common formats, such as octets with
+leading zeroes ("192.168.000.001") and reverse DNS lookups
+("1.0.168.192.in-addr.arpa"). In these cases, IP addresses are normalized
+for consistency and sorting.
+
+=head1 SYNOPSIS
+
+... | sort_ip.pl [OPTIONS] [[FILENAME] ...]
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-s>
+
+Disable sorting and print IP addresses in the order in which they were found.
+
+=item B<-c>
+
+Count the number of occurences of each IP address and prefix each line with the
+total number.
+
+=item B<-f>
+
+Extract only the first IP address from each line. All other addresses on a line
+will be ignored.
+
+=item B<-l>
+
+Print the entire line where an IP address is found. If more than one IP address
+exists on a given line, that line will be printed multiple times for each IP
+address.
+
+=item B<-p>
+
+Prepend lines with the IP address matching on that line. Requires B<-l> to be
+applied to print the entire line.
+
+=item B<-i>
+
+Ignore comment lines starting with #.
+
+=item B<-r>
+
+Perform relaxed matching. This option should only be used when the input is
+known to contain actual IP addresses, otherwise the output may contain invalid
+IP addresses.
+
+=item B<-h>, B<-?>
+
+Print a basic help screen.
+
+=back
+
+=head1 LICENSE
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. If not, see <http://www.gnu.org/licenses/>.
+
+=head1 COPYRIGHT
+
+Copyright 2009,2013,2017,2019,2023 (C) Christopher J. Dunkle
+
+=cut
