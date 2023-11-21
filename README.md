@@ -3,7 +3,7 @@ sort_ip.pl - extracts and sorts IP addresses
 # Description
 Extracts, sorts, and prints a list of unique IP addresses found in the input. Reads from either STDIN or a list of specified filenames. IP addresses are sorted using numeric equivalent values.
 
-IP addresses are matched using a strict regular expression that prevents matching on strings containing more than 4 dots. This intentionally excludes SNMP OIDs with a greater number of dotted values, but also excludes tcpdump output with a dotted port number after valid IP addresses. The -r option applies a relaxed regular expression that will correctly match tcpdump output, but will also incorrectly match SNMP OIDs. Use this option with caution.
+IP addresses are matched using a strict regular expression that prevents matching on strings containing more than 4 dots. This intentionally excludes SNMP OIDs with a greater number of dotted values, but also excludes tcpdump output with a dotted port number after valid IP addresses. The `-r` option applies a relaxed regular expression that will correctly match tcpdump output, but will also incorrectly match SNMP OIDs. Use this option with caution.
 
 Relaxed matching will also match on other common formats, such as octets with leading zeroes ("192.168.000.001") and reverse DNS lookup ("1.0.168.192.in-addr.arpa"). In these cases, IP addresses are normalized for consistency and sorting.
 # Synopsis
