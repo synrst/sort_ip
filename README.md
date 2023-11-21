@@ -13,7 +13,7 @@ Relaxed matching will also match on other common formats, such as octets with le
 * `-c` - Count the number of occurences of each IP address and prefix each line with the total number.
 * `-f` - Extract only the first IP address from each line. All other addresses on a line will be ignored.
 * `-l` - Print the entire line where an IP address is found. If more than one IP address exists on a given line, that line will be printed multiple times for each IP address.
-* `-p` - Prepend lines with the IP address matching on that line. Requires B<-l> to be applied to print the entire line.
+* `-p` - Prepend lines with the IP address matching on that line. Requires `-l` to be applied to print the entire line.
 * `-i` - Ignore comment lines starting with #.
 * `-r` - Perform relaxed matching. This option should only be used when the input is known to contain actual IP addresses, otherwise the output may contain invalid IP addresses.
 * `-h`, `-?` - Print a basic help screen.
